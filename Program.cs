@@ -46,7 +46,6 @@ internal class Program {
       string time = DateTime.Now.ToString("HH:mm:ss");
 
       try{
-                        // http://real-chart.finance.yahoo.com/table.csv?
         string homepage = "http://finance.yahoo.com/d/quotes.csv?s=TSLA&f=nab";
 
         using (WebClient web = new WebClient()) {
