@@ -20,11 +20,13 @@ internal class Program {
         Price p = new Price();
         p.Name = cols[0].Substring(1);
 
-        if(cols[2] != "N/A")
+        if(cols[2] != "N/A") {
           p.Ask = Convert.ToDecimal(cols[2]);
+        }
 
-        if(cols[3] != "N/A")
+        if(cols[3] != "N/A") {
           p.Bid = Convert.ToDecimal(cols[3]);
+        }
 
         prices.Add(p);
 
@@ -35,6 +37,8 @@ internal class Program {
   }
 
   private static void Main(string[] args) {
+
+    bool alreadyChecked = false;
 
     string headline = "date\t\ttime\t\tname\t\task\tbid";
 
@@ -49,62 +53,74 @@ internal class Program {
 
       string time = DateTime.Now.ToString("HH:mm:ss");
 
-      try{
-        string homepage = "http://finance.yahoo.com/d/quotes.csv?s=TSLA&f=nab";
+      if(time.Substring(time.Length - 2) == "00" && !alreadyChecked){
 
-        using (WebClient web = new WebClient()) {
+        try{
+          string homepage = "http://finance.yahoo.com/d/quotes.csv?s=TSLA&f=nab";
 
-          csvData = web.DownloadString(homepage);
+          using (WebClient web = new WebClient()) {
 
-        }
+            csvData = web.DownloadString(homepage);
 
-      }
-
-      catch (System.Net.WebException e) {
-
-        using (StreamWriter w = File.AppendText("errorlog.txt")) {
-          w.WriteLine(e);
-          w.WriteLine();
-        }
-
-        continue;
-      }
-
-      List<Price> prices = Parse(csvData);
-
-      foreach (Price price in prices) {
-
-        string name = string.Format("{0}", price.Name);
-        string ask = string.Format("{0}", price.Ask);
-        string bid = string.Format("{0}", price.Bid);
-
-        string s = date + "\t" + time + "\t" + name + "\t" + ask + "\t" + bid;
-
-        if(ask != "0" && bid != "0") {
-          Console.WriteLine(s);
-
-          using (StreamWriter w = File.AppendText("TSLA.txt")) {
-            w.WriteLine(s);
           }
+
         }
-        else {
 
-          string message = "stock price not available";
-
-          string t = date + "\t" + time + "\t" + name + "\t" + message;
+        catch (System.Net.WebException e) {
 
           using (StreamWriter w = File.AppendText("errorlog.txt")) {
-            w.WriteLine(t);
+            w.WriteLine(e);
+            w.WriteLine();
           }
+
+          continue;
         }
+
+        List<Price> prices = Parse(csvData);
+
+        foreach (Price price in prices) {
+
+          string name = string.Format("{0}", price.Name);
+          string ask = string.Format("{0}", price.Ask);
+          string bid = string.Format("{0}", price.Bid);
+
+          string s = date + "\t" + time + "\t" + name + "\t" + ask + "\t" + bid;
+
+          if(ask != "0" && bid != "0") {
+            Console.WriteLine(s);
+
+            using (StreamWriter w = File.AppendText("TSLA.txt")) {
+              w.WriteLine(s);
+            }
+          }
+          else {
+
+            string message = "stock price not available";
+
+            string t = date + "\t" + time + "\t" + name + "\t" + message;
+
+            using (StreamWriter w = File.AppendText("errorlog.txt")) {
+              w.WriteLine(t);
+            }
+          }
+
+        }
+
+        alreadyChecked = true;
 
       }
 
+      if(time.Substring(time.Length - 2) == "01") {
+
+        alreadyChecked = false;
+
+      }
+
+
+
       // wait one minute
-
-      int seconds = 1000;
-
-      System.Threading.Thread.Sleep(60 * seconds);
+      // int seconds = 1000;
+      // System.Threading.Thread.Sleep(60 * seconds);
 
     }
 
