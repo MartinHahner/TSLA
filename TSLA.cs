@@ -19,8 +19,12 @@ internal class Program {
 
         Price p = new Price();
         p.Name = cols[0].Substring(1);
-        p.Ask = Convert.ToDecimal(cols[2]);
-        p.Bid = Convert.ToDecimal(cols[3]);
+
+        if(cols[2] != "N/A")
+          p.Ask = Convert.ToDecimal(cols[2]);
+
+        if(cols[3] != "N/A")
+          p.Bid = Convert.ToDecimal(cols[3]);
 
         prices.Add(p);
 
@@ -37,7 +41,7 @@ internal class Program {
     Console.WriteLine(headline);
     Console.WriteLine("##########\t########\t############\t######\t######");
 
-    while (true) {
+    while (File.Exists("continue.txt")) {
 
       string csvData;
 
@@ -76,10 +80,22 @@ internal class Program {
 
         string s = date + "\t" + time + "\t" + name + "\t" + ask + "\t" + bid;
 
-        Console.WriteLine(s);
+        if(ask != "0" && bid != "0") {
+          Console.WriteLine(s);
 
-        using (StreamWriter w = File.AppendText("TSLA.txt")) {
-          w.WriteLine(s);
+          using (StreamWriter w = File.AppendText("TSLA.txt")) {
+            w.WriteLine(s);
+          }
+        }
+        else {
+
+          string message = "stock price not available";
+
+          string t = date + "\t" + time + "\t" + name + "\t" + message;
+
+          using (StreamWriter w = File.AppendText("errorlog.txt")) {
+            w.WriteLine(t);
+          }
         }
 
       }
