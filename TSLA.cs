@@ -21,11 +21,19 @@ internal class Program {
         p.Name = cols[0].Substring(1);
 
         if(cols[2] != "N/A") {
+
+          cols[2] = cols[2].Substring(0, Math.Min(cols[2].Length, 6));
+
           p.Ask = Convert.ToDecimal(cols[2]);
+
         }
 
         if(cols[3] != "N/A") {
+
+          cols[3] = cols[3].Substring(0, Math.Min(cols[3].Length, 6));
+
           p.Bid = Convert.ToDecimal(cols[3]);
+
         }
 
         prices.Add(p);
@@ -56,11 +64,15 @@ internal class Program {
       if(time.Substring(time.Length - 2) == "00" && !alreadyChecked){
 
         try{
-          string homepage = "http://finance.yahoo.com/d/quotes.csv?s=TSLA&f=nab";
+
+          string homepage = "http://finance.yahoo.com/d/quotes.csv?s=TSLA&f=";
+
+          // string query = homepage + "nb2b3";
+          string query = homepage + "nab";
 
           using (WebClient web = new WebClient()) {
 
-            csvData = web.DownloadString(homepage);
+            csvData = web.DownloadString(query);
 
           }
 
