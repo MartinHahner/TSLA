@@ -46,8 +46,6 @@ internal class Program {
 
   private static void Main(string[] args) {
 
-    bool alreadyChecked = false;
-
     // string headline = "date\t\ttime\t\tname\t\task\tbid";
 
     // Console.WriteLine(headline);
@@ -61,7 +59,7 @@ internal class Program {
 
       string time = DateTime.Now.ToString("HH:mm:ss");
 
-      if(time.Substring(time.Length - 2) == "00" && !alreadyChecked){
+      if(time.Substring(time.Length - 2) == "00"){
 
         try{
 
@@ -119,21 +117,91 @@ internal class Program {
 
         }
 
-        alreadyChecked = true;
+        string day = date.Split('.')[0];
+
+        string month = date.Split('.')[1];
+
+        string year = date.Split('.')[2];
+
+        string hour = time.Split(':')[0];
+
+        string nextminute = time.Split(':')[1];
+
+        int nextmin = 0;
+        Int32.TryParse(nextminute, out nextmin);
+        nextmin = (nextmin + 1) % 60;
+
+        nextminute = nextmin.ToString();
+
+        int nexthour = 99;
+        if(nextmin == 0) {
+          Int32.TryParse(hour, out nexthour);
+          nexthour++;
+          if(nexthour == 24) {
+            nexthour = 0;
+          }
+          hour = nexthour.ToString();
+        }
+
+        int nextday = 99;
+        if(nexthour == 0) {
+          Int32.TryParse(day, out nextday);
+          nextday++;
+          int y = 0;
+          int m = 0;
+          Int32.TryParse(year, out y);
+          Int32.TryParse(month, out m);
+          if(nextday == (DateTime.DaysInMonth(y, m) + 1)) {
+            nextday = 1;
+          }
+          day = nextday.ToString();
+        }
+
+        int nextMonth = 99;
+        if(nextday == 0) {
+          Int32.TryParse(month, out nextMonth);
+          nextMonth++;
+          if(nextMonth == 13) {
+            nextMonth = 1;
+          }
+          month = nextMonth.ToString();
+        }
+
+        int nextYear = 99;
+        if(nextMonth == 1) {
+          Int32.TryParse(year, out nextYear);
+          nextYear = nextYear + 1;
+          year = nextYear.ToString();
+        }
+
+        if(day.Length == 1) {
+          day = "0" + day;
+        }
+
+        if(month.Length == 1) {
+          month = "0" + month;
+        }
+
+        if(hour.Length == 1) {
+          hour = "0" + hour;
+        }
+
+        if(nextminute.Length == 1) {
+          nextminute = "0" + nextminute;
+        }
+
+        string myTime = day + "/" + month + "/" + year + " " + hour + ":" + nextminute + ":00";
+        DateTime myDate = DateTime.ParseExact(myTime, "dd/MM/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+
+        TimeSpan span = myDate.Subtract(DateTime.Now);
+
+        int secondsLeft = span.Seconds - 1;
+
+        // wait till end of minute
+        int seconds = 1000;
+        System.Threading.Thread.Sleep(secondsLeft * seconds);
 
       }
-
-      if(time.Substring(time.Length - 2) == "01") {
-
-        alreadyChecked = false;
-
-      }
-
-
-
-      // wait one minute
-      // int seconds = 1000;
-      // System.Threading.Thread.Sleep(60 * seconds);
 
     }
 
