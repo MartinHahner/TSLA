@@ -48,10 +48,10 @@ internal class Program {
 
     bool alreadyChecked = false;
 
-    string headline = "date\t\ttime\t\tname\t\task\tbid";
+    // string headline = "date\t\ttime\t\tname\t\task\tbid";
 
-    Console.WriteLine(headline);
-    Console.WriteLine("##########\t########\t############\t######\t######");
+    // Console.WriteLine(headline);
+    // Console.WriteLine("##########\t########\t############\t######\t######");
 
     while (File.Exists("continue.txt")) {
 
@@ -99,7 +99,8 @@ internal class Program {
           string s = date + "\t" + time + "\t" + name + "\t" + ask + "\t" + bid;
 
           if(ask != "0" && bid != "0") {
-            Console.WriteLine(s);
+
+            // Console.WriteLine(s);
 
             using (StreamWriter w = File.AppendText("TSLA.txt")) {
               w.WriteLine(s);
